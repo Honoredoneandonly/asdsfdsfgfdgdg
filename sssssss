@@ -1,0 +1,951 @@
+local Version = "1.6.63"
+local WindUI = loadstring(game:HttpGet(
+    "https://github.com/Footagesus/WindUI/releases/download/" .. Version .. "/main.lua"
+))()
+
+--// Services
+local RunService = game:GetService("RunService")
+local Stats = game:GetService("Stats")
+
+--// Theme
+WindUI:AddTheme({
+    Name = "Decay's Theme", -- theme name
+    
+    Icon = WindUI:Gradient({                                                      
+        ["0"] = { Color = Color3.fromHex("#ffffff"), Transparency = 0 },            
+        ["100"]   = { Color = Color3.fromHex("#050505"), Transparency = 0 },        
+    }, {                                                                            
+        Rotation = 0,                                                               
+    }),
+
+    Toggle = WindUI:Gradient({                                                      
+        ["0"] = { Color = Color3.fromHex("#ffffff"), Transparency = 0 },            
+        ["100"]   = { Color = Color3.fromHex("#000000"), Transparency = 0 },        
+    }, {                                                                            
+        Rotation = 0,                                                               
+    }),
+    Slider = WindUI:Gradient({                                                      
+        ["0"] = { Color = Color3.fromHex("#615f5f"), Transparency = 0 },            
+        ["100"]   = { Color = Color3.fromHex("#727272"), Transparency = 0 },        
+    }, {                                                                            
+        Rotation = 0,                                                               
+    }),
+})
+
+local SupportedGames = {
+    [10449761463] = "Game A",  -- replace with actual PlaceIds
+    [31231234412] = "Game B",
+    [213214124] = "Game C"
+}
+
+local currentPlaceId = game.PlaceId
+
+-- Check if the game is supported
+if not SupportedGames[currentPlaceId] then
+    warn("Unsupported game! Script will not load.")
+    return -- stop the script here; UI won't load
+end
+
+print("Supported game detected: " .. SupportedGames[currentPlaceId])
+
+--// Window
+local Window = WindUI:CreateWindow({
+    Title = "Decay's Hub",
+    Icon = "badge-check",
+    Author = "By Decay",
+    Folder = "Decay's Hub",
+    Background = "rbxassetid://14023528711",
+    Size = UDim2.fromOffset(580, 460),
+    MinSize = Vector2.new(560, 350),
+    MaxSize = Vector2.new(850, 560),
+    Transparent = true,
+    Theme = "Decay's Theme",
+    Resizable = true,
+    SideBarWidth = 200,
+    BackgroundImageTransparency = 0.50,
+    HideSearchBar = true,
+    ScrollBarEnabled = false,
+    
+
+    User = {
+        Enabled = true,
+        Anonymous = false,
+        Callback = function()
+            print("clicked")
+        end,
+    },
+})
+
+--// Tags
+if currentPlaceId == 10449761463 then
+    -- TSB game
+    Window:Tag({
+        Title = "TSB",
+        Icon = "gamepad-2",
+        Color = Color3.fromHex("#8800FF"),
+        Radius = 13,
+    })
+elseif currentPlaceId == 1234124214 then
+    -- Game B
+    Window:Tag({
+        Title = "",
+        Icon = "gamepad-2",
+        Color = Color3.fromHex("#FF0000"),
+        Radius = 13,
+    })
+elseif currentPlaceId == 12321313213 then
+    -- Game C
+    Window:Tag({
+        Title = "",
+        Icon = "gamepad-2",
+        Color = Color3.fromHex("#00FFFF"),
+        Radius = 13,
+    })
+end
+
+
+Window:Tag({
+    Title = "v1",
+    Icon = "github",
+    Color = Color3.fromHex("#0073FF"),
+    Radius = 13,
+})
+
+-- FPS Tag
+local FPSTag = Window:Tag({
+    Title = "FPS: 0",
+    Icon = "activity",
+    Color = Color3.fromHex("#0073FF"),
+    Radius = 13,
+})
+
+-- Ping Tag
+local PingTag = Window:Tag({
+    Title = "Ping: 0 ms",
+    Icon = "wifi",
+    Color = Color3.fromHex("#0073FF"),
+    Radius = 13,
+})
+
+--// FPS + Ping Logic
+local frames = 0
+local lastTime = tick()
+
+RunService.RenderStepped:Connect(function()
+    frames += 1
+    local now = tick()
+
+    if now - lastTime >= 1 then
+        -- FPS
+        local fps = math.floor(frames / (now - lastTime))
+        frames = 0
+        lastTime = now
+
+        FPSTag:SetTitle("FPS: " .. fps)
+
+        if fps >= 60 then
+            FPSTag:SetColor(Color3.fromRGB(0, 255, 0))
+        elseif fps >= 30 then
+            FPSTag:SetColor(Color3.fromRGB(255, 170, 0))
+        else
+            FPSTag:SetColor(Color3.fromRGB(255, 0, 0))
+        end
+
+        -- Ping
+        local ping = math.floor(
+            Stats.Network.ServerStatsItem["Data Ping"]:GetValue()
+        )
+
+        PingTag:SetTitle("Ping: " .. ping .. " ms")
+
+        if ping <= 60 then
+            PingTag:SetColor(Color3.fromRGB(0, 255, 0))
+        elseif ping <= 120 then
+            PingTag:SetColor(Color3.fromRGB(255, 170, 0))
+        else
+            PingTag:SetColor(Color3.fromRGB(255, 0, 0))
+        end
+    end
+end)
+    if currentPlaceId == 10449761463 then
+--// Tab
+local Tab1 = Window:Tab({
+    Title = "Moveset Changers", -- title
+    Icon = "aperture", -- icon
+    IconColor = Color3.fromRGB(200, 200, 200),
+    IconShape = "Square", -- square or circle
+    Border = false, -- tab border
+})
+
+local Tab2 = Window:Tab({
+    Title = "Scripts", -- title
+    Icon = "backpack", -- icon
+    IconColor = Color3.fromRGB(255, 0, 0),
+    IconShape = "Square", -- square or circle
+    Border = false, -- tab border
+})
+
+local SaitamaSection = Tab1:Section({
+    Title = "Saitama",
+    Desc = "Visual Only",
+    Icon = "rbxassetid://15114667107",
+    Box = true,
+    BoxBorder = true,
+    TextXAlignment = "Center"
+})
+
+SaitamaSection:Button({ 
+    Title = "Naruto",
+    Desc = "Peakruto",
+    Locked = false,
+    Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/LolnotaKid/NarutoBeatUpSasukeAss/refs/heads/main/NarutoCums"))()
+    end
+})
+
+SaitamaSection:Button({ 
+    Title = "Jun",
+    Desc = "Junnnn",
+    Locked = false,
+    Callback = function()
+       loadstring(game:HttpGet("https://gist.githubusercontent.com/GoldenHeads2/f66279000c58a020e894a6db44914838/raw/62e53e1acacec0b38b43cd0f594292c32e09c39b/gistfile1.txt"))()
+    end
+})
+
+SaitamaSection:Button({ 
+    Title = "Glitchtale Chara",
+    Desc = "Chara peak",
+    Locked = false,
+    Callback = function()
+       loadstring(game:HttpGet("https://paste.ee/r/0yYkO"))()
+    end
+})
+
+SaitamaSection:Button({ 
+    Title = "KJ",
+    Desc = "Its just so peak",
+    Locked = false,
+    Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/RathaTepmanuth10/Kj-script-/main/Kj"))()
+    end
+})
+
+SaitamaSection:Button({ 
+    Title = "Yuji x Sukuna",
+    Desc = "Peak peak peak peak",
+    Locked = false,
+    Callback = function()
+       loadstring(game:HttpGet('https://pastebin.com/raw/1yaXL0rA'))()
+    end
+})
+
+SaitamaSection:Button({ 
+    Title = "Manga Gojo",
+    Desc = "this is fire",
+    Locked = false,
+    Callback = function()
+       	getgenv().morph = true
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/skibiditoiletfan2007/BaldyToSorcerer/refs/heads/main/LatestV2.lua"))()
+    end
+})
+
+SaitamaSection:Button({ 
+    Title = "Gojo Domain",
+    Desc = "Domain Expansion!",
+    Locked = false,
+    Callback = function()
+       	loadstring(game:HttpGet("https://pastebin.com/raw/777Q4QDN", true))()
+    end
+})
+
+SaitamaSection:Button({ 
+    Title = "Mahito",
+    Desc = "Where you go i go",
+    Locked = false,
+    Callback = function()
+       	loadstring(game:HttpGet('https://raw.githubusercontent.com/Kenjihin69/Kenjihin69/refs/heads/main/Mahitotsbupdate'))()
+    end
+})
+
+SaitamaSection:Button({ 
+    Title = "JJS Gojo",
+    Desc = "Bit Broken",
+    Locked = false,
+    Callback = function()
+       	loadstring(game:HttpGet("https://gist.githubusercontent.com/JcBoomin/a63e9ac3e90cef03ecf37e997fd21632/raw/98b567b81f61bb30042e0078b78f3fb24685fb8d/Gojo", true))()
+    end
+})
+
+SaitamaSection:Button({ 
+    Title = "Sukuna",
+    Desc = "Actually peak",
+    Locked = false,
+    Callback = function()
+       	loadstring(game:HttpGet("https://raw.githubusercontent.com/damir512/whendoesbrickdie/main/tspno.txt",true))()
+    end
+})
+
+local GarouSection = Tab1:Section({
+    Title = "Garou",
+    Desc = "Visual Only",
+    Icon = "rbxassetid://15124465439",
+    Box = true,
+    BoxBorder = true,
+    TextXAlignment = "Center"
+})
+
+GarouSection:Button({ 
+    Title = "Gaybriel",
+    Desc = "UltraPeak",
+    Locked = false,
+    Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/damir512/youinsinificants/main/insignificantFuck.txt", true))()
+    end
+})
+
+GarouSection:Button({ 
+    Title = "Mastery Deku",
+    Desc = "Deku",
+    Locked = false,
+    Callback = function()
+       loadstring(game:HttpGet("https://pastebin.com/raw/xKextYP5"))()
+    end
+})
+
+GarouSection:Button({ 
+    Title = "Void Garou",
+    Desc = "Upcoming!",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Void%20Reaper%20Obfuscated.txt"))()
+    end
+})
+
+GarouSection:Button({ 
+    Title = "John Doe",
+    Desc = "The Myth",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Luckyfromyoutube/JohnDoe/refs/heads/main/TSBMODEL"))()
+    end
+})
+
+GarouSection:Button({ 
+    Title = "Hyper Sonic",
+    Desc = "Actual Peak",
+    Locked = false,
+    Callback = function()
+       loadstring(game:HttpGet("https://paste.ee/r/fxY03"))()
+    end
+})
+
+local SonicSection = Tab1:Section({
+    Title = "Sonic",
+    Desc = "Coming Soon",
+    Icon = "rbxassetid://15114672498",
+    Box = true,
+    BoxBorder = true,
+    TextXAlignment = "Center"
+})
+
+local AtomicSection = Tab1:Section({
+    Title = "Atomic",
+    Desc = "Coming Soon",
+    Icon = "rbxassetid://15143528539",
+    Box = true,
+    BoxBorder = true,
+    TextXAlignment = "Center"
+})
+
+local TechSection = Tab2:Section({
+    Title = "Techs",
+    Desc = "Flashy Techs",
+    Icon = "arrow-down-wide-narrow",
+    Box = true,
+    BoxBorder = true,
+    TextXAlignment = "Center"
+})
+
+TechSection:Button({ 
+    Title = "Supa Tech V2",
+    Desc = "Always Hits",
+    Locked = false,
+    Callback = function()
+       loadstring(game:HttpGet("https://api.getpolsec.com/scripts/hosted/2753546c83053761e44664d36ffe5035d6e20fc8aee1d19f0eb7b933974ae537.lua"))()
+    end
+})
+
+TechSection:Button({ 
+    Title = "Cool Tech GUI",
+    Desc = "By Merebennie",
+    Locked = false,
+    Callback = function()
+       loadstring(game:HttpGet("https://api.getpolsec.com/scripts/hosted/5f20686e7f7949068518fdad97821c57098f285781a1c21cc2be90d5ef64f278.lua"))()
+    end
+})
+
+local ToolsSection = Tab2:Section({
+    Title = "Tools",
+    Desc = "Assists you",
+    Icon = "anchor",
+    Box = true,
+    BoxBorder = true,
+    TextXAlignment = "Center"
+})
+
+ToolsSection:Button({ 
+    Title = "Death Counter",
+    Desc = "Allows you to see DC Users",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/louismich4el/ItsLouisPlayz-Scripts/main/TSB%20Death%20Counter%20Identifier.lua"))()
+    end
+})
+
+ToolsSection:Button({ 
+    Title = "Room TP",
+    Desc = "Teleports you and others to the rooms",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/LolnotaKid/Obfuscate2/main/obf_TOh95bwY3QlD6Su0tvByE4lEBi14b4R54ousQ9R8vTAjGjF0ee7wts7he0gZh4Ib.lua.txt"))()
+    end
+})
+
+ToolsSection:Button({ 
+    Title = "Trashcan Man",
+    Desc = "Pick up your bins",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yes1nt/yes/refs/heads/main/Trashcan%20Man", true))()
+    end
+})
+
+ToolsSection:Button({ 
+    Title = "Titan Form",
+    Desc = "Transform",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://paste.ee/r/fxY03"))()
+    end
+})
+
+Window:EditOpenButton({
+    Title = "Open Decay's Hub",
+    Icon = "monitor",
+    CornerRadius = UDim.new(0, 16),
+    StrokeThickness = 2,
+    Color = ColorSequence.new(
+        Color3.fromHex("#ffffff"),
+        Color3.fromHex("#ffffff")
+    ),
+    OnlyMobile = false,
+    Enabled = true,
+    Draggable = true,
+})
+end
+
+local Tab5 = Window:Tab({
+    Title = "Universal Scripts", -- title
+    Icon = "airplay", -- icon
+    IconColor = Color3.fromRGB(56, 39, 245),
+    IconShape = "Square", -- square or circle
+    Border = false, -- tab border
+})
+
+local Tab3 = Window:Tab({
+    Title = "Settings", -- title
+    Icon = "settings", -- icon
+    IconColor = Color3.fromRGB(0, 0, 0),
+    IconShape = "Square", -- square or circle
+    Border = false, -- tab border
+})
+
+local Tab4 = Window:Tab({
+    Title = "Misc", 
+    Icon = "menu", 
+    IconColor = Color3.fromRGB(255, 255, 255),
+    IconShape = "Square", 
+    Border = false, 
+})
+
+--// Services
+local Players = game:GetService("Players")
+
+
+-- Paragraph (we update this fully instead of separate ones)
+local InfoParagraph = Tab4:Paragraph({
+    Title = "💻 Server Info",
+    Desc = "Loading...",
+})
+
+--// Session Timer
+local startTime = tick()
+
+local function formatTime(seconds)
+    local hrs = math.floor(seconds / 3600)
+    local mins = math.floor((seconds % 3600) / 60)
+    local secs = math.floor(seconds % 60)
+
+    return string.format("%dh %dm %ds", hrs, mins, secs)
+end
+
+--// Update Loop (1 second refresh)
+task.spawn(function()
+    while true do
+        local playerCount = #Players:GetPlayers()
+        local maxPlayers = Players.MaxPlayers
+        local sessionTime = formatTime(tick() - startTime)
+
+        InfoParagraph:SetDesc(
+            "👥 Players: " .. playerCount .. " / " .. maxPlayers .. "\n" ..
+            "🆔 PlaceId: " .. game.PlaceId .. "\n" ..
+            "⏳ Session Time: " .. sessionTime .. "\n" ..
+            "🧩 JobId: " .. game.JobId
+        )
+
+        task.wait(1)
+    end
+end)
+
+Tab4:Divider()
+
+local Button = Tab4:Button({
+    Title = "📋 Copy JobId",
+    Desc = "Allows you to copy the server's JobId",
+    Locked = false,
+    Callback = function()
+        -- Copy JobId to clipboard
+        setclipboard(tostring(game.JobId))  -- Roblox function to set clipboard
+        print("JobId copied: " .. game.JobId)
+    end
+})
+
+local JoinJobInput = Tab4:Input({
+    Title = "🟢 Join JobId",  -- emoji in the title
+    Desc = "",
+    Value = "",               -- start empty
+    Type = "Input",           -- single-line input
+    Placeholder = "Enter JobId...",
+    Callback = function(input)
+        if input == "" then
+            print("No JobId entered")
+            return
+        end
+
+        print("Joining JobId: " .. input)
+        -- Teleport to server using JobId
+        local success, err = pcall(function()
+            game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, input)
+        end)
+        if not success then
+            warn("Failed to join JobId: " .. tostring(err))
+        end
+    end
+})
+
+local RejoinButton = Tab4:Button({
+    Title = "🔄 Rejoin Server",  -- emoji added
+    Desc = "Rejoins the current server",
+    Locked = false,
+    Callback = function()
+        -- Rejoin current server using TeleportService
+        local success, err = pcall(function()
+            game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId)
+        end)
+
+        if success then
+            print("Rejoining server...")
+        else
+            warn("Failed to rejoin server: " .. tostring(err))
+        end
+    end
+})
+
+Tab4:Divider()
+
+local ServerHopButton = Tab4:Button({
+    Title = "🌌 Server Hop",  -- emoji added
+    Desc = "Joins a different server",
+    Locked = false,
+    Callback = function()
+        -- Server hop logic
+        local TeleportService = game:GetService("TeleportService")
+        local PlaceId = game.PlaceId
+
+        -- Get a list of public servers
+        local success, servers = pcall(function()
+            return game:GetService("HttpService"):JSONDecode(game:HttpGetAsync("https://games.roblox.com/v1/games/"..PlaceId.."/servers/Public?sortOrder=Asc&limit=100"))
+        end)
+
+        if success and servers and servers.data then
+            for _, server in ipairs(servers.data) do
+                if server.id ~= game.JobId and server.playing < server.maxPlayers then
+                    -- Teleport to this server
+                    pcall(function()
+                        TeleportService:TeleportToPlaceInstance(PlaceId, server.id)
+                    end)
+                    print("Hopping to server: " .. server.id)
+                    return
+                end
+            end
+            warn("No available servers found to hop to.")
+        else
+            warn("Failed to get server list.")
+        end
+    end
+})
+
+local ServerHopLowButton = Tab4:Button({
+    Title = "🛸 Server Hop (Lowest Players)",  -- emoji added
+    Desc = "Joins the server with the fewest players",
+    Locked = false,
+    Callback = function()
+        local TeleportService = game:GetService("TeleportService")
+        local HttpService = game:GetService("HttpService")
+        local PlaceId = game.PlaceId
+
+        -- Get public servers
+        local success, servers = pcall(function()
+            local response = game:HttpGetAsync("https://games.roblox.com/v1/games/"..PlaceId.."/servers/Public?sortOrder=Asc&limit=100")
+            return HttpService:JSONDecode(response)
+        end)
+
+        if success and servers and servers.data then
+            local targetServer
+            local lowestPlayers = math.huge
+
+            -- Find the server with lowest players that isn't the current one
+            for _, server in ipairs(servers.data) do
+                if server.id ~= game.JobId and server.playing < server.maxPlayers then
+                    if server.playing < lowestPlayers then
+                        lowestPlayers = server.playing
+                        targetServer = server.id
+                    end
+                end
+            end
+
+            if targetServer then
+                pcall(function()
+                    TeleportService:TeleportToPlaceInstance(PlaceId, targetServer)
+                end)
+                print("Hopping to server with lowest players: " .. targetServer .. " (" .. lowestPlayers .. " players)")
+            else
+                warn("No available servers found to hop to.")
+            end
+        else
+            warn("Failed to get server list.")
+        end
+    end
+})
+
+local Dropdown = Tab3:Dropdown({
+    Title = "Select Theme",
+    Values = {
+        {
+            Title = "Gojo 1",
+            Desc = "Teen Goatjo",
+            Icon = "image-up",
+            Callback = function() 
+                Window:SetBackgroundImage("rbxassetid://14023528711")
+            end
+        },
+        {
+            Title = "Gojo 2",
+            Desc = "Teen Goatjo",
+            Icon = "image-up",
+            Callback = function() 
+                Window:SetBackgroundImage("rbxassetid://112599702984899")
+            end
+        },
+        {
+            Title = "Gojo 3",
+            Desc = "Shinjuku Goatjo",
+            Icon = "image-up",
+            Callback = function() 
+                Window:SetBackgroundImage("rbxassetid://117879857831459")
+            end
+        },
+        { Type = "Divider", },
+        {
+            Title = "Gojo X Sukuna",
+            Desc = "Goatjo and Sukuna",
+            Icon = "image-up",
+            Callback = function() 
+                Window:SetBackgroundImage("rbxassetid://17451382159")
+            end
+        },
+         {
+            Title = "Domain Clash",
+            Desc = "Goatjo and Sukuna DC",
+            Icon = "image-up",
+            Callback = function() 
+                Window:SetBackgroundImage("rbxassetid://17673794986")
+            end
+        },
+         {
+            Title = "Yujo and Sukuna DC",
+            Desc = "Yuta and Sukuna Domain Clash",
+            Icon = "image-up",
+            Callback = function() 
+                Window:SetBackgroundImage("rbxassetid://70672748026507")
+            end
+        },
+    }
+})
+
+local Button = Tab5:Button({
+    Title = "Anti Afk",
+    Desc = "Allows u to stay in the server",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/hassanxzayn-lua/Anti-afk/main/antiafkbyhassanxzyn"))();
+    end
+})
+
+local Button = Tab5:Button({
+    Title = "Infinite Yield",
+    Desc = "Cool admin script",
+    Locked = false,
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+    end
+})
+
+--// Premium System Configuration
+local PremiumConfig = {
+    PastebinURL = "https://pastebin.com/raw/4fBfj4JA",  -- Replace with your raw pastebin link
+}
+
+--// Services
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+--// Create Premium Tab immediately (no delay)
+local PremiumTab = Window:Tab({
+    Title = "Premium",
+    Icon = "star",
+    IconColor = Color3.fromRGB(255, 215, 0),
+    IconShape = "Square",
+    Border = false,
+})
+
+--// Get Hardware ID
+local function GetHWID()
+    local success, hwid = pcall(function()
+        return game:GetService("RbxAnalyticsService"):GetClientId()
+    end)
+    
+    if success and hwid then
+        print("HWID obtained:", hwid)
+        return hwid
+    else
+        local fallback = LocalPlayer.UserId .. "_fallback"
+        warn("Failed to get HWID, using fallback:", fallback)
+        return fallback
+    end
+end
+
+--// Store HWID
+local UserHWID = GetHWID()
+
+--// Check if user has premium access via HWID whitelist
+local function HasPremiumAccess(player)
+    local success, result = pcall(function()
+        local whitelist = game:HttpGet(PremiumConfig.PastebinURL)
+        
+        for hwid in string.gmatch(whitelist, "[^\r\n]+") do
+            hwid = string.gsub(hwid, "%s+", "")
+            if hwid == UserHWID then
+                return true
+            end
+        end
+        return false
+    end)
+    
+    if success then
+        print("Premium check result:", result)
+        return result
+    else
+        warn("Failed to check whitelist")
+        return false
+    end
+end
+
+--// Get current user's premium status
+local IsPremium = HasPremiumAccess(LocalPlayer)
+
+local PremiumFeature1 = PremiumTab:Section({
+    Title = "Avatar Items",
+    Desc = "Client Sided Avatar Items",
+    Icon = "star",
+    Box = true,
+    BoxBorder = true,
+    TextXAlignment = "Center"
+})
+
+if IsPremium then
+    PremiumFeature1:Button({ 
+        Title = "Headless",
+        Desc = "Gives you headless",
+        Locked = false,
+        Callback = function()
+
+local player = game.Players.LocalPlayer
+
+local function makeHeadInvisible(character)
+    if not character then return end
+    
+    local head = character:FindFirstChild("Head")
+    if head then
+        -- Wait a bit to ensure all assets are loaded
+        task.wait(0)
+        
+        -- Set the head's transparency to 1 to make it invisible
+        head.Transparency = 1
+        
+        -- Remove the face decal if it exists
+        for _, part in pairs(head:GetChildren()) do
+            if part:IsA("Decal") then
+                part:Destroy()
+            end
+        end
+        
+        -- Disable the head's collisions
+        if head:IsA("BasePart") then
+            head.CanCollide = false
+        end
+    end
+end
+
+-- Apply to current character if loaded
+if player.Character then
+    makeHeadInvisible(player.Character)
+end
+
+-- Ensure the effect is applied every time the player respawns
+player.CharacterAdded:Connect(function(character)
+    character:WaitForChild("Head") -- Ensure the head exists before modifying
+    makeHeadInvisible(character)
+end)
+        end
+    })
+else
+    PremiumFeature1:Button({ 
+        Title = "Headless",
+        Desc = "Premium required",
+        Locked = true,
+        Callback = function()
+            -- Won't be called
+        end
+    })
+end
+
+if IsPremium then
+    PremiumFeature1:Button({ 
+        Title = "Korblox",
+        Desc = "Gives you Korblox",
+        Locked = false,
+        Callback = function()
+local player = game:GetService("Players").LocalPlayer
+
+local function applyKorbloxLeg(char)
+    repeat wait() until char:FindFirstChild("Right Leg")
+
+    local rightLeg = char:FindFirstChild("Right Leg")
+    if rightLeg then
+        rightLeg.Transparency = 1
+
+        local korbloxLeg = Instance.new("Part")
+        korbloxLeg.Name = "KorbloxLeg"
+        korbloxLeg.Size = Vector3.new(1, 1, 1)
+        korbloxLeg.Position = rightLeg.Position
+        korbloxLeg.Anchored = false
+        korbloxLeg.CanCollide = false
+        korbloxLeg.Parent = char
+
+        local mesh = Instance.new("SpecialMesh")
+        mesh.MeshId = "http://www.roblox.com/asset/?id=9598310133"
+        mesh.TextureId = "http://roblox.com/asset/?id=902843398"
+        mesh.Scale = Vector3.new(1, 1, 1)
+        mesh.Parent = korbloxLeg
+
+        local weld = Instance.new("Weld")
+        weld.Part0 = rightLeg
+        weld.Part1 = korbloxLeg
+        weld.C0 = CFrame.new(0, 0.8, 0)
+        weld.Parent = korbloxLeg
+    end
+end
+
+if player.Character then
+    applyKorbloxLeg(player.Character)
+end
+
+player.CharacterAdded:Connect(function(char)
+    applyKorbloxLeg(char)
+end)
+        end
+    })
+else
+    PremiumFeature1:Button({ 
+        Title = "Korblox",
+        Desc = "Premium required",
+        Locked = true,
+        Callback = function()
+            -- Won't be called
+        end
+    })
+end
+
+local PremiumFeature2 = PremiumTab:Section({
+    Title = "Coming Soon...",
+    Desc = "Making more to add to this",
+    Icon = "gem",
+    Box = true,
+    BoxBorder = true,
+    TextXAlignment = "Center"
+})
+
+if IsPremium then
+    PremiumFeature2:Button({ 
+        Title = "Soon",
+        Desc = "Soon",
+        Locked = false,
+        Callback = function()
+            -- Your code here
+            print("Premium Feature 2 activated!")
+        end
+    })
+else
+    PremiumFeature2:Button({ 
+        Title = "🔒 Locked",
+        Desc = "Premium required",
+        Locked = true,
+        Callback = function()
+            -- Won't be called
+        end
+    })
+end
+
+
+if not IsPremium then
+    print("Non-premium user detected, showing HWID info")
+    print("UserHWID value:", UserHWID)
+    
+    PremiumTab:Paragraph({
+        Title = "🔒 Premium Access Required",
+        Desc = "Purchase in our discord and open a ticket and send your HWID to get access"
+    })
+    
+    PremiumTab:Button({
+        Title = "📋 Copy HWID",
+        Desc = "Copy to clipboard",
+        Locked = false,
+        Callback = function()
+            setclipboard(tostring(UserHWID))
+            print("HWID copied: " .. tostring(UserHWID))
+        end
+    })
+else
+    print("Premium user detected")
+end
