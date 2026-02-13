@@ -34,7 +34,7 @@ WindUI:AddTheme({
 
 local SupportedGames = {
     [10449761463] = "Game A",  -- replace with actual PlaceIds
-    [31231234412] = "Game B",
+    [9872472334] = "Game B",
     [213214124] = "Game C"
 }
 
@@ -85,12 +85,12 @@ if currentPlaceId == 10449761463 then
         Color = Color3.fromHex("#8800FF"),
         Radius = 13,
     })
-elseif currentPlaceId == 1234124214 then
+elseif currentPlaceId == 9872472334 then
     -- Game B
     Window:Tag({
-        Title = "",
+        Title = "Evade",
         Icon = "gamepad-2",
-        Color = Color3.fromHex("#FF0000"),
+        Color = Color3.fromHex("#8800FF"),
         Radius = 13,
     })
 elseif currentPlaceId == 12321313213 then
@@ -384,6 +384,18 @@ TechSection:Button({
     end
 })
 
+TechSection:Button({ 
+    Title = "No Dash Endlag",
+    Desc = "To take it off rejoin",
+    Locked = false,
+    Callback = function()
+       local url = "https://raw.githubusercontent.com/Slaphello/UNC-Test/refs/heads/main/M1%20Reset%20Bypass(Obfuscated).txt"
+
+local source = game:HttpGet(url)
+loadstring(source)()
+    end
+})
+
 local ToolsSection = Tab2:Section({
     Title = "Tools",
     Desc = "Assists you",
@@ -429,6 +441,348 @@ ToolsSection:Button({
     end
 })
 
+elseif currentPlaceId == 9872472334 then
+    local EvadeTab = Window:Tab({
+    Title = "Movement", -- title
+    Icon = "aperture", -- icon
+    IconColor = Color3.fromRGB(200, 200, 200),
+    IconShape = "Square", -- square or circle
+    Border = false, -- tab border
+})
+
+    local VisualTab = Window:Tab({
+    Title = "Visual", -- title
+    Icon = "eye", -- icon
+    IconColor = Color3.fromRGB(0, 255, 0),
+    IconShape = "Square", -- square or circle
+    Border = false, -- tab border
+})
+
+    local CosmeticsTab = Window:Tab({
+    Title = "Cosmetics", -- title
+    Icon = "hat-glasses", -- icon
+    IconColor = Color3.fromRGB(255, 13, 0),
+    IconShape = "Square", -- square or circle
+    Border = false, -- tab border
+})
+
+local CosmeticsSection = CosmeticsTab:Section({
+    Title = "Cosmetics",
+    Desc = "Coming Soon...",
+    Icon = "",
+    Box = true,
+    BoxBorder = true,
+    TextXAlignment = "Center"
+})
+
+local Button = EvadeTab:Button({
+    Title = "Infinite Slide",
+    Desc = "Hold ctrl and GO FAST!",
+    Locked = false,
+    Callback = function()
+        local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local plr = Players.LocalPlayer
+
+local slideSpeed = 0
+
+RunService.Stepped:Connect(function()
+    local char = plr.Character
+    if not char then return end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChildWhichIsA("Humanoid")
+    if not (hrp and hum) then return end
+
+    if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
+        hum.WalkSpeed = 0
+        slideSpeed = math.min(slideSpeed + 0.5, 100)
+        local lookVector = hrp.CFrame.LookVector
+        hrp.AssemblyLinearVelocity = Vector3.new(
+            lookVector.X * slideSpeed,
+            hrp.AssemblyLinearVelocity.Y,
+            lookVector.Z * slideSpeed
+        )
+    else
+        slideSpeed = math.max(slideSpeed - 2, 0)
+        hum.WalkSpeed = 16
+    end
+end)
+    end
+})
+
+local ESPToggle = VisualTab:Toggle({
+    Title = "Nextbot ESP",
+    Desc = "Highlights nextbots through walls",
+    Icon = "eye",
+    Type = "Checkbox",
+    Value = false,
+    Callback = function(state)
+        if state then
+            _G.ESPConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    if obj:IsA("Model") and obj:FindFirstChild("HumanoidRootPart") then
+                        local isPlayer = false
+                        for _, p in ipairs(game.Players:GetPlayers()) do
+                            if p.Character == obj then
+                                isPlayer = true
+                                break
+                            end
+                        end
+
+                        if not isPlayer then
+                            if not obj:FindFirstChild("NextbotESP") then
+                                local highlight = Instance.new("Highlight")
+                                highlight.Name = "NextbotESP"
+                                highlight.FillColor = Color3.fromRGB(255, 0, 0)
+                                highlight.OutlineColor = Color3.fromRGB(255, 255, 0)
+                                highlight.FillTransparency = 0.3
+                                highlight.OutlineTransparency = 0
+                                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                                highlight.Parent = obj
+
+                                local billboard = Instance.new("BillboardGui")
+                                billboard.Name = "NextbotESPTag"
+                                billboard.Size = UDim2.new(0, 100, 0, 40)
+                                billboard.StudsOffset = Vector3.new(0, 3, 0)
+                                billboard.AlwaysOnTop = true
+                                billboard.Parent = obj:FindFirstChild("HumanoidRootPart")
+
+                                local label = Instance.new("TextLabel")
+                                label.Size = UDim2.new(1, 0, 1, 0)
+                                label.BackgroundTransparency = 1
+                                label.Text = "⚠️ " .. obj.Name
+                                label.TextColor3 = Color3.fromRGB(255, 0, 0)
+                                label.TextStrokeTransparency = 0
+                                label.TextScaled = true
+                                label.Font = Enum.Font.GothamBold
+                                label.Parent = billboard
+                            end
+
+                            local hrp = obj:FindFirstChild("HumanoidRootPart")
+                            local localHRP = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                            if hrp and localHRP then
+                                local dist = math.floor((hrp.Position - localHRP.Position).Magnitude)
+                                local tag = hrp:FindFirstChild("NextbotESPTag")
+                                if tag then
+                                    local lbl = tag:FindFirstChildWhichIsA("TextLabel")
+                                    if lbl then
+                                        lbl.Text = "⚠️ " .. obj.Name .. " [" .. dist .. "m]"
+                                        if dist < 30 then
+                                            lbl.TextColor3 = Color3.fromRGB(255, 0, 0)
+                                        elseif dist < 60 then
+                                            lbl.TextColor3 = Color3.fromRGB(255, 165, 0)
+                                        else
+                                            lbl.TextColor3 = Color3.fromRGB(255, 255, 0)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        else
+            if _G.ESPConnection then
+                _G.ESPConnection:Disconnect()
+                _G.ESPConnection = nil
+            end
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj.Name == "NextbotESP" then obj:Destroy() end
+                if obj.Name == "NextbotESPTag" then obj:Destroy() end
+            end
+        end
+    end
+})
+
+local groundSpeed = 0.05
+
+local uis = game:GetService("UserInputService")
+local rs = game:GetService("RunService")
+local plr = game.Players.LocalPlayer
+
+rs.RenderStepped:Connect(function()
+    local char = plr.Character
+    if not char then return end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChildWhichIsA("Humanoid")
+    local cam = workspace.CurrentCamera
+    if not (hrp and hum and cam) then return end
+
+    local grounded = hum.FloorMaterial ~= Enum.Material.Air
+
+    local moveDir = Vector3.zero
+    if uis:IsKeyDown(Enum.KeyCode.W) then
+        moveDir += cam.CFrame.LookVector
+    end
+    moveDir = Vector3.new(moveDir.X, 0, moveDir.Z)
+
+    if moveDir.Magnitude > 0 and grounded then
+        hrp.CFrame = hrp.CFrame + moveDir.Unit * groundSpeed
+    end
+end)
+
+local SpeedSlider = EvadeTab:Slider({
+    Title = "Movement Speed",
+    Desc = "Adjust your movement speed",
+    Icon = "zap",
+    Step = 0.01,
+    Value = {
+        Min = 0.05,
+        Max = 0.5,
+        Default = 0.05,
+    },
+    Callback = function(value)
+        groundSpeed = value
+    end
+})
+
+
+local bhopEnabled = false
+
+local BhopToggle = EvadeTab:Toggle({
+    Title = "Bunny Hop",
+    Desc = "Auto jumps when you hit the ground",
+    Icon = "zap",
+    Type = "Checkbox",
+    Value = false,
+    Callback = function(state)
+        bhopEnabled = state
+    end
+})
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    if not bhopEnabled then return end
+    local char = plr.Character
+    if not char then return end
+    local hum = char:FindFirstChildWhichIsA("Humanoid")
+    if not hum then return end
+
+    local state = hum:GetState()
+    if state ~= Enum.HumanoidStateType.Jumping and state ~= Enum.HumanoidStateType.Freefall then
+        hum:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+end)
+
+local espEnabled = false
+
+local ESPToggle = VisualTab:Toggle({
+    Title = "Player ESP",
+    Desc = "See players through walls",
+    Icon = "eye",
+    Type = "Checkbox",
+    Value = false,
+    Callback = function(state)
+        espEnabled = state
+        if not state then
+            for _, player in ipairs(game.Players:GetPlayers()) do
+                if player ~= plr and player.Character then
+                    local char = player.Character
+                    local hrp = char:FindFirstChild("HumanoidRootPart")
+                    if char:FindFirstChild("PlayerESP") then
+                        char.PlayerESP:Destroy()
+                    end
+                    if hrp and hrp:FindFirstChild("PlayerESPTag") then
+                        hrp.PlayerESPTag:Destroy()
+                    end
+                end
+            end
+        end
+    end
+})
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    if not espEnabled then return end
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player ~= plr and player.Character then
+            local char = player.Character
+            local hrp = char:FindFirstChild("HumanoidRootPart")
+            local localHRP = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart")
+            if not hrp then return end
+
+            if not char:FindFirstChild("PlayerESP") then
+                local highlight = Instance.new("Highlight")
+                highlight.Name = "PlayerESP"
+                highlight.FillColor = Color3.fromRGB(0, 100, 255)
+                highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+                highlight.FillTransparency = 0.5
+                highlight.OutlineTransparency = 0
+                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                highlight.Parent = char
+
+                local billboard = Instance.new("BillboardGui")
+                billboard.Name = "PlayerESPTag"
+                billboard.Size = UDim2.new(0, 100, 0, 40)
+                billboard.StudsOffset = Vector3.new(0, 3, 0)
+                billboard.AlwaysOnTop = true
+                billboard.Parent = hrp
+
+                local label = Instance.new("TextLabel")
+                label.Size = UDim2.new(1, 0, 1, 0)
+                label.BackgroundTransparency = 1
+                label.TextStrokeTransparency = 0
+                label.TextScaled = true
+                label.Font = Enum.Font.GothamBold
+                label.Parent = billboard
+            end
+
+            if hrp and localHRP then
+                local dist = math.floor((hrp.Position - localHRP.Position).Magnitude)
+                local tag = hrp:FindFirstChild("PlayerESPTag")
+                if tag then
+                    local label = tag:FindFirstChildWhichIsA("TextLabel")
+                    if label then
+                        label.Text = player.Name .. " [" .. dist .. "m]"
+                        if dist < 20 then
+                            label.TextColor3 = Color3.fromRGB(255, 0, 0)
+                        elseif dist < 50 then
+                            label.TextColor3 = Color3.fromRGB(255, 165, 0)
+                        else
+                            label.TextColor3 = Color3.fromRGB(0, 100, 255)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+local autoReviveEnabled = false
+
+local AutoReviveToggle = EvadeTab:Toggle({
+    Title = "Auto Revive Teleport",
+    Desc = "Teleports you to downed teammates",
+    Icon = "heart",
+    Type = "Checkbox",
+    Value = false,
+    Callback = function(state)
+        autoReviveEnabled = state
+    end
+})
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    if not autoReviveEnabled then return end
+    local char = plr.Character
+    if not char then return end
+    local localHRP = char:FindFirstChild("HumanoidRootPart")
+    if not localHRP then return end
+
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player ~= plr and player.Character then
+            local targetChar = player.Character
+            local targetHRP = targetChar:FindFirstChild("HumanoidRootPart")
+            local targetHum = targetChar:FindFirstChildWhichIsA("Humanoid")
+
+            if targetHRP and targetHum and targetHum.Health == 0 then
+                localHRP.CFrame = targetHRP.CFrame + Vector3.new(0, 3, 0)
+                break
+            end
+        end
+    end
+end)
+
+end
+
 Window:EditOpenButton({
     Title = "Open Decay's Hub",
     Icon = "monitor",
@@ -442,7 +796,7 @@ Window:EditOpenButton({
     Enabled = true,
     Draggable = true,
 })
-end
+
 
 local Tab5 = Window:Tab({
     Title = "Universal Scripts", -- title
@@ -897,34 +1251,206 @@ else
     })
 end
 
-local PremiumFeature2 = PremiumTab:Section({
-    Title = "Coming Soon...",
-    Desc = "Making more to add to this",
-    Icon = "gem",
-    Box = true,
-    BoxBorder = true,
-    TextXAlignment = "Center"
-})
+if currentPlaceId == 9872472334 then
+    local EvadePremium = PremiumTab:Section({
+        Title = "Evade Features",
+        Desc = "OP Features",
+        Icon = "zap",
+        Box = true,
+        BoxBorder = true,
+        TextXAlignment = "Center"
+    })
+
+    if IsPremium then
+        EvadePremium:Button({
+            Title = "Bounce",
+            Desc = "Hold space when bouncing",
+            Locked = false,
+            Callback = function()
+                local uis = game:GetService("UserInputService")
+local rs = game:GetService("RunService")
+local plr = game.Players.LocalPlayer
+
+local bounceThreshold = -20
+local initialBounceMultiplier = 1.2
+local maxBounceMultiplier = 2.0
+local bounceGrowthRate = 0.003
+local crouchBoostMultiplier = 1.6
+local upwardLimit = 100
+local decayTime = 3
+local crouching = false
+local spaceHeld = false
+local lastYVel = 0
+local currentBounceMultiplier = initialBounceMultiplier
+local lastBounceTime = tick()
+
+uis.InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+    if input.KeyCode == Enum.KeyCode.LeftControl then
+        crouching = true
+    elseif input.KeyCode == Enum.KeyCode.Space then
+        spaceHeld = true
+    end
+end)
+
+uis.InputEnded:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.LeftControl then
+        crouching = false
+    elseif input.KeyCode == Enum.KeyCode.Space then
+        spaceHeld = false
+    end
+end)
+
+rs.Stepped:Connect(function()
+    local char = plr.Character
+    if not char then return end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChildWhichIsA("Humanoid")
+    if not (hrp and hum) then return end
+    local grounded = hum.FloorMaterial ~= Enum.Material.Air
+    local yVel = hrp.Velocity.Y
+    if grounded and (tick() - lastBounceTime > decayTime) then
+        currentBounceMultiplier = initialBounceMultiplier
+    end
+    if grounded and lastYVel < bounceThreshold and spaceHeld then
+        local bouncePower = -lastYVel * currentBounceMultiplier
+        if crouching then
+            bouncePower *= crouchBoostMultiplier
+        end
+        bouncePower = math.min(bouncePower, upwardLimit)
+        hrp.Velocity = Vector3.new(hrp.Velocity.X, bouncePower, hrp.Velocity.Z)
+        currentBounceMultiplier = math.min(currentBounceMultiplier + bounceGrowthRate, maxBounceMultiplier)
+        lastBounceTime = tick()
+    end
+    lastYVel = yVel
+end)
+            end
+        })
+    else
+        EvadePremium:Button({
+            Title = "Bounce",
+            Desc = "Premium required",
+            Locked = true,
+            Callback = function() end
+        })
+    end
 
 if IsPremium then
-    PremiumFeature2:Button({ 
-        Title = "Soon",
-        Desc = "Soon",
-        Locked = false,
-        Callback = function()
-            -- Your code here
-            print("Premium Feature 2 activated!")
+    local toxicInfernoEnabled = false
+    local toxicInfernoConnection = nil
+
+    EvadePremium:Toggle({
+        Title = "Toxic Inferno",
+        Desc = "Client-sided cosmetic",
+        Icon = "flame",
+        Type = "Checkbox",
+        Value = false,
+        Callback = function(state)
+            toxicInfernoEnabled = state
+            local player = game.Players.LocalPlayer
+            local ReplicatedStorage = game:GetService("ReplicatedStorage")
+            
+            local function removeToxicInferno(character)
+                if not character then return end
+                
+                local head = character:FindFirstChild("Head")
+                if not head then return end
+                
+                -- Remove all attachments and their children from head
+                for _, child in pairs(head:GetChildren()) do
+                    if child:IsA("Attachment") then
+                        -- Check if it has ParticleEmitters (that's toxic inferno)
+                        for _, particle in pairs(child:GetChildren()) do
+                            if particle:IsA("ParticleEmitter") then
+                                child:Destroy()
+                                break
+                            end
+                        end
+                    end
+                end
+                
+                print("🗑️ Removed toxic inferno attachments")
+            end
+            
+            local function equipToxicInferno(character)
+                if not character then return end
+                
+                task.wait(0.5)
+                
+                local head = character:FindFirstChild("Head")
+                
+                if not head then 
+                    warn("⚠️ Head not found")
+                    return 
+                end
+                
+                -- Remove existing first
+                removeToxicInferno(character)
+                
+                if not toxicInfernoEnabled then
+                    return
+                end
+                
+                local toxicInferno = ReplicatedStorage.Items.Cosmetics:FindFirstChild("ToxicInferno")
+                
+                if not toxicInferno then
+                    warn("⚠️ Toxic Inferno not found")
+                    return
+                end
+                
+                -- Clone Attachments and center them
+                for _, descendant in pairs(toxicInferno:GetDescendants()) do
+                    if descendant:IsA("Attachment") then
+                        local cloned = descendant:Clone()
+                        cloned.Parent = head
+                        cloned.Position = Vector3.new(0, 0, 0)
+                        cloned.CFrame = CFrame.new(0, 0, 0)
+                    end
+                end
+                
+                print("✅ Toxic Inferno equipped!")
+            end
+            
+            if state then
+                -- Apply to current character
+                if player.Character then
+                    equipToxicInferno(player.Character)
+                end
+                
+                -- Connect respawn handler
+                if toxicInfernoConnection then
+                    toxicInfernoConnection:Disconnect()
+                end
+                toxicInfernoConnection = player.CharacterAdded:Connect(equipToxicInferno)
+                
+                print("✅ Toxic Inferno enabled")
+            else
+                -- Remove from current character IMMEDIATELY
+                if player.Character then
+                    removeToxicInferno(player.Character)
+                end
+                
+                -- Disconnect respawn handler
+                if toxicInfernoConnection then
+                    toxicInfernoConnection:Disconnect()
+                    toxicInfernoConnection = nil
+                end
+                
+                print("❌ Toxic Inferno disabled")
+            end
         end
     })
 else
-    PremiumFeature2:Button({ 
-        Title = "🔒 Locked",
+    EvadePremium:Toggle({
+        Title = "Toxic Inferno",
         Desc = "Premium required",
+        Icon = "flame",
+        Type = "Checkbox",
+        Value = false,
         Locked = true,
-        Callback = function()
-            -- Won't be called
-        end
+        Callback = function() end
     })
+end
 end
 
 
