@@ -1144,43 +1144,40 @@ if IsPremium then
         Locked = false,
         Callback = function()
 
-local player = game.Players.LocalPlayer
+local lp = game.Players.LocalPlayer
 
-local function makeHeadInvisible(character)
-    if not character then return end
-    
-    local head = character:FindFirstChild("Head")
-    if head then
-        -- Wait a bit to ensure all assets are loaded
-        task.wait(0)
-        
-        -- Set the head's transparency to 1 to make it invisible
-        head.Transparency = 1
-        
-        -- Remove the face decal if it exists
-        for _, part in pairs(head:GetChildren()) do
-            if part:IsA("Decal") then
-                part:Destroy()
+local function makeHeadless(char)
+    local head = char:WaitForChild("Head", 3)
+    if not head then return end
+
+    local function apply()
+        head.LocalTransparencyModifier = 1
+        for _, v in ipairs(head:GetChildren()) do
+            if v:IsA("Decal") or v:IsA("Texture") then
+                v.Transparency = 1
             end
         end
-        
-        -- Disable the head's collisions
-        if head:IsA("BasePart") then
-            head.CanCollide = false
-        end
     end
+
+    apply()
+    head:GetPropertyChangedSignal("LocalTransparencyModifier"):Connect(function()
+        if head.LocalTransparencyModifier ~= 1 then
+            apply()
+        end
+    end)
+
+    head:GetPropertyChangedSignal("Transparency"):Connect(function()
+        if head.Transparency ~= 1 then
+            apply()
+        end
+    end)
 end
 
--- Apply to current character if loaded
-if player.Character then
-    makeHeadInvisible(player.Character)
-end
+lp.CharacterAdded:Connect(makeHeadless)
 
--- Ensure the effect is applied every time the player respawns
-player.CharacterAdded:Connect(function(character)
-    character:WaitForChild("Head") -- Ensure the head exists before modifying
-    makeHeadInvisible(character)
-end)
+if lp.Character then
+    makeHeadless(lp.Character)
+end
         end
     })
 else
